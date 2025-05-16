@@ -1,0 +1,911 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ITELEC3 Activity 6 - CRUD API</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .endpoint {
+            margin-bottom: 20px;
+            padding: 15px;
+            border: 1px solid #e0e0e0;
+            border-radius: 5px;
+        }
+        .method {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 3px;
+            font-weight: bold;
+            color: white;
+            margin-right: 10px;
+        }
+        .get { background-color: #61affe; }
+        .post { background-color: #49cc90; }
+        .put { background-color: #fca130; }
+        .delete { background-color: #f93e3e; }
+        pre {
+            background-color: #f8f9fa;
+            padding: 10px;
+            border-radius: 5px;
+            overflow-x: auto;
+        }
+        .nav-tabs .nav-link.active {
+            font-weight: bold;
+        }
+        #response-container {
+            min-height: 200px;
+        }
+        .api-btn {
+            margin-right: 5px;
+            margin-bottom: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-5">
+        <div class="row">
+            <div class="col-md-6">
+                <h1 class="mb-4">ITELEC3 Activity 6 - CRUD API</h1>
+            </div>
+            <div class="col-md-6 text-end">
+                <a class="btn btn-primary" href="#interactive-section">Test API</a>
+                <button class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#documentationModal">Documentation</button>
+            </div>
+        </div>
+
+        <!-- Welcome Section -->
+        <div class="alert alert-light border p-4 mb-4">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <h3>Welcome to the API Testing Dashboard</h3>
+                    <p class="mb-0">This dashboard allows you to interact with the CRUD API endpoints. Test creating, reading, updating, and deleting data from the three models: Categories, Products, and Customers.</p>
+                </div>
+                <div class="col-md-4 text-end">
+                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#tokenModal">Get API Token</button>
+                </div>
+            </div>
+        </div>
+
+        
+        <!-- Interactive API Testing Section -->
+        <div id="interactive-section" class="p-4 border rounded bg-light">
+            <h2 class="mb-4">API Testing Interface</h2>
+            
+            <div class="mb-3">
+                <label for="auth-token" class="form-label">Authentication Token</label>
+                <div class="input-group">
+                    <input type="text" class="form-control" id="auth-token" placeholder="Enter your auth token here">
+                    <button class="btn btn-outline-secondary" type="button" data-bs-toggle="modal" data-bs-target="#tokenModal">Get Token</button>
+                </div>
+                <div class="form-text">All requests require authentication</div>
+            </div>
+            
+            <ul class="nav nav-tabs" id="apiTabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="categories-tab" data-bs-toggle="tab" data-bs-target="#categories-content" type="button" role="tab">Categories</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="products-tab" data-bs-toggle="tab" data-bs-target="#products-content" type="button" role="tab">Products</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="customers-tab" data-bs-toggle="tab" data-bs-target="#customers-content" type="button" role="tab">Customers</button>
+                </li>
+            </ul>
+            
+            <div class="tab-content p-3 border border-top-0 rounded-bottom" id="apiTabContent">
+                <!-- Categories Tab -->
+                <div class="tab-pane fade show active" id="categories-content" role="tabpanel">
+                    <div class="d-flex flex-wrap mb-3">
+                        <button class="btn btn-info api-btn" onclick="fetchCategories()">GET All Categories</button>
+                        <button class="btn btn-info api-btn" onclick="fetchCategoryById()">GET Category by ID</button>
+                        <button class="btn btn-success api-btn" onclick="showCreateCategoryForm()">CREATE Category</button>
+                        <button class="btn btn-warning api-btn" onclick="showUpdateCategoryForm()">UPDATE Category</button>
+                        <button class="btn btn-danger api-btn" onclick="showDeleteCategoryForm()">DELETE Category</button>
+                    </div>
+                    
+                    <div id="category-form-container" class="mb-3"></div>
+                </div>
+                
+                <!-- Products Tab -->
+                <div class="tab-pane fade" id="products-content" role="tabpanel">
+                    <div class="d-flex flex-wrap mb-3">
+                        <button class="btn btn-info api-btn" onclick="fetchProducts()">GET All Products</button>
+                        <button class="btn btn-info api-btn" onclick="fetchProductById()">GET Product by ID</button>
+                        <button class="btn btn-success api-btn" onclick="showCreateProductForm()">CREATE Product</button>
+                        <button class="btn btn-warning api-btn" onclick="showUpdateProductForm()">UPDATE Product</button>
+                        <button class="btn btn-danger api-btn" onclick="showDeleteProductForm()">DELETE Product</button>
+                    </div>
+                    
+                    <div id="product-form-container" class="mb-3"></div>
+                </div>
+                
+                <!-- Customers Tab -->
+                <div class="tab-pane fade" id="customers-content" role="tabpanel">
+                    <div class="d-flex flex-wrap mb-3">
+                        <button class="btn btn-info api-btn" onclick="fetchCustomers()">GET All Customers</button>
+                        <button class="btn btn-info api-btn" onclick="fetchCustomerById()">GET Customer by ID</button>
+                        <button class="btn btn-success api-btn" onclick="showCreateCustomerForm()">CREATE Customer</button>
+                        <button class="btn btn-warning api-btn" onclick="showUpdateCustomerForm()">UPDATE Customer</button>
+                        <button class="btn btn-danger api-btn" onclick="showDeleteCustomerForm()">DELETE Customer</button>
+                    </div>
+                    
+                    <div id="customer-form-container" class="mb-3"></div>
+                </div>
+            </div>
+            
+            <div class="mt-4">
+                <h5>Response</h5>
+                <div id="response-container" class="p-3 border rounded bg-white">
+                    <pre id="response-data">No response yet. Click a button above to test an API endpoint.</pre>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Authentication Modal -->
+        <div class="modal fade" id="tokenModal" tabindex="-1" aria-labelledby="tokenModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="tokenModalLabel">Get Authentication Token</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="username" class="form-label">Username</label>
+                            <input type="text" class="form-control" id="username">
+                        </div>
+                        <div class="mb-3">
+                            <label for="password" class="form-label">Password</label>
+                            <input type="password" class="form-control" id="password">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary" onclick="getAuthToken()">Get Token</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Documentation Modal -->
+        <div class="modal fade" id="documentationModal" tabindex="-1" aria-labelledby="documentationModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-xl modal-dialog-scrollable">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="documentationModalLabel">API Documentation</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="alert alert-info">
+                            <strong>Note:</strong> All requests require authentication. Use Token Authentication by including the header: <code>Authorization: Token &lt;your_token&gt;</code>
+                        </div>
+                        
+                        <h2 class="mt-4">Authentication</h2>
+                        <div class="endpoint">
+                            <span class="method post">POST</span> <code>/api/api-token-auth/</code>
+                            <p>Get authentication token</p>
+                            <h6>Request Body:</h6>
+                            <pre>
+{
+    "username": "your_username",
+    "password": "your_password"
+}
+                            </pre>
+                            <h6>Response:</h6>
+                            <pre>
+{
+    "token": "9944b09199c62bcf9418ad846dd0e4bbdfc6ee4b"
+}
+                            </pre>
+                        </div>
+                        
+                        <h2 class="mt-4">Categories</h2>
+                        <!-- List Categories -->
+                        <div class="endpoint">
+                            <span class="method get">GET</span> <code>/api/categories/</code>
+                            <p>List all categories</p>
+                            <h6>Response:</h6>
+                            <pre>
+[
+    {
+        "id": 1,
+        "name": "Electronics",
+        "description": "Electronic devices and accessories",
+        "created_at": "2023-10-15T10:30:00Z",
+        "updated_at": "2023-10-15T10:30:00Z",
+        "is_active": true
+    },
+    ...
+]
+                            </pre>
+                        </div>
+                        
+                        <!-- Get Category Detail -->
+                        <div class="endpoint">
+                            <span class="method get">GET</span> <code>/api/categories/{id}/</code>
+                            <p>Get a specific category</p>
+                            <h6>Response:</h6>
+                            <pre>
+{
+    "id": 1,
+    "name": "Electronics",
+    "description": "Electronic devices and accessories",
+    "created_at": "2023-10-15T10:30:00Z",
+    "updated_at": "2023-10-15T10:30:00Z",
+    "is_active": true
+}
+                            </pre>
+                        </div>
+                        
+                        <!-- Create Category -->
+                        <div class="endpoint">
+                            <span class="method post">POST</span> <code>/api/categories/</code>
+                            <p>Create a new category</p>
+                            <h6>Request Body:</h6>
+                            <pre>
+{
+    "name": "Books",
+    "description": "Books and literature",
+    "is_active": true
+}
+                            </pre>
+                            <h6>Response:</h6>
+                            <pre>
+{
+    "id": 2,
+    "name": "Books",
+    "description": "Books and literature",
+    "created_at": "2023-10-15T11:00:00Z",
+    "updated_at": "2023-10-15T11:00:00Z",
+    "is_active": true
+}
+                            </pre>
+                        </div>
+                        
+                        <!-- Update Category -->
+                        <div class="endpoint">
+                            <span class="method put">PUT</span> <code>/api/categories/{id}/</code>
+                            <p>Update a category</p>
+                            <h6>Request Body:</h6>
+                            <pre>
+{
+    "name": "Books",
+    "description": "Books, e-books and audiobooks",
+    "is_active": true
+}
+                            </pre>
+                            <h6>Response:</h6>
+                            <pre>
+{
+    "id": 2,
+    "name": "Books",
+    "description": "Books, e-books and audiobooks",
+    "created_at": "2023-10-15T11:00:00Z",
+    "updated_at": "2023-10-15T11:30:00Z",
+    "is_active": true
+}
+                            </pre>
+                        </div>
+                        
+                        <!-- Delete Category -->
+                        <div class="endpoint">
+                            <span class="method delete">DELETE</span> <code>/api/categories/{id}/</code>
+                            <p>Delete a category</p>
+                            <h6>Response:</h6>
+                            <p>204 No Content</p>
+                        </div>
+                        
+                        <h2 class="mt-4">Products</h2>
+                        <!-- List Products -->
+                        <div class="endpoint">
+                            <span class="method get">GET</span> <code>/api/products/</code>
+                            <p>List all products</p>
+                            <h6>Response:</h6>
+                            <pre>
+[
+    {
+        "id": 1,
+        "name": "Smartphone",
+        "description": "Latest smartphone model",
+        "price": "999.99",
+        "category": 1,
+        "stock": 50,
+        "created_at": "2023-10-15T10:30:00Z",
+        "updated_at": "2023-10-15T10:30:00Z",
+        "is_available": true
+    },
+    ...
+]
+                            </pre>
+                        </div>
+                        
+                        <h2 class="mt-4">Customers</h2>
+                        <!-- List Customers -->
+                        <div class="endpoint">
+                            <span class="method get">GET</span> <code>/api/customers/</code>
+                            <p>List all customers</p>
+                            <h6>Response:</h6>
+                            <pre>
+[
+    {
+        "id": 1,
+        "first_name": "John",
+        "last_name": "Doe",
+        "email": "john.doe@example.com",
+        "phone": "+1234567890",
+        "address": "123 Main St, City",
+        "created_at": "2023-10-15T10:30:00Z",
+        "updated_at": "2023-10-15T10:30:00Z",
+        "is_active": true
+    },
+    ...
+]
+                            </pre>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // Get CSRF token for Django
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+        const csrftoken = getCookie('csrftoken');
+
+        // Authentication
+        function getAuthToken() {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            
+            if (!username || !password) {
+                document.getElementById('response-data').textContent = 'Please enter both username and password';
+                return;
+            }
+            
+            document.getElementById('response-data').textContent = 'Authenticating...';
+            
+            fetch('/api/api-token-auth/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrftoken,
+                },
+                body: JSON.stringify({
+                    username: username,
+                    password: password
+                })
+            })
+            .then(response => {
+                const contentType = response.headers.get('content-type');
+                if (contentType && contentType.includes('application/json')) {
+                    return response.json().then(data => {
+                        return { status: response.status, data };
+                    });
+                } else {
+                    return response.text().then(text => {
+                        return { 
+                            status: response.status, 
+                            data: { error: 'Received non-JSON response', details: text.substring(0, 150) + '...' } 
+                        };
+                    });
+                }
+            })
+            .then(result => {
+                if (result.status >= 200 && result.status < 300 && result.data.token) {
+                    document.getElementById('auth-token').value = result.data.token;
+                    document.getElementById('response-data').textContent = JSON.stringify(result.data, null, 2);
+                    var modal = bootstrap.Modal.getInstance(document.getElementById('tokenModal'));
+                    modal.hide();
+                } else {
+                    document.getElementById('response-data').textContent = 'Error: Status ' + result.status + '\n' + JSON.stringify(result.data, null, 2);
+                }
+            })
+            .catch(error => {
+                document.getElementById('response-data').textContent = 'Error: ' + error;
+            });
+        }
+        
+        // Helper function for API calls
+        function apiCall(url, method, body = null) {
+            const token = document.getElementById('auth-token').value;
+            if (!token) {
+                document.getElementById('response-data').textContent = 'Please enter an authentication token first';
+                return;
+            }
+            
+            const options = {
+                method: method,
+                headers: {
+                    'Authorization': 'Token ' + token,
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrftoken,
+                }
+            };
+            
+            if (body && (method === 'POST' || method === 'PUT')) {
+                options.body = JSON.stringify(body);
+            }
+            
+            document.getElementById('response-data').textContent = 'Loading...';
+            
+            fetch(url, options)
+                .then(response => {
+                    if (response.status === 204) {
+                        return { status: 204, message: 'No Content' };
+                    }
+                    
+                    // Check the content type of the response
+                    const contentType = response.headers.get('content-type');
+                    if (contentType && contentType.includes('application/json')) {
+                        return response.json().then(data => {
+                            return { status: response.status, data };
+                        });
+                    } else {
+                        // Handle non-JSON response
+                        return response.text().then(text => {
+                            return { 
+                                status: response.status, 
+                                data: { error: 'Received non-JSON response', details: text.substring(0, 150) + '...' } 
+                            };
+                        });
+                    }
+                })
+                .then(result => {
+                    if (result.status === 204) {
+                        document.getElementById('response-data').textContent = 'Success: Status 204 No Content';
+                    } else if (result.status >= 200 && result.status < 300) {
+                        document.getElementById('response-data').textContent = JSON.stringify(result.data, null, 2);
+                    } else {
+                        document.getElementById('response-data').textContent = 'Error: Status ' + result.status + '\n' + JSON.stringify(result.data, null, 2);
+                    }
+                })
+                .catch(error => {
+                    document.getElementById('response-data').textContent = 'Error: ' + error;
+                });
+        }
+        
+        // Categories
+        function fetchCategories() {
+            apiCall('/api/categories/', 'GET');
+        }
+        
+        function fetchCategoryById() {
+            const id = prompt('Enter category ID:');
+            if (id) {
+                apiCall(`/api/categories/${id}/`, 'GET');
+            }
+        }
+        
+        function showCreateCategoryForm() {
+            const formHtml = `
+                <div class="card">
+                    <div class="card-header">Create New Category</div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label class="form-label">Name</label>
+                            <input type="text" class="form-control" id="category-name">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Description</label>
+                            <textarea class="form-control" id="category-description"></textarea>
+                        </div>
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" class="form-check-input" id="category-is-active" checked>
+                            <label class="form-check-label">Is Active</label>
+                        </div>
+                        <button class="btn btn-primary" onclick="createCategory()">Submit</button>
+                    </div>
+                </div>
+            `;
+            document.getElementById('category-form-container').innerHTML = formHtml;
+        }
+        
+        function createCategory() {
+            const name = document.getElementById('category-name').value;
+            const description = document.getElementById('category-description').value;
+            const isActive = document.getElementById('category-is-active').checked;
+            
+            apiCall('/api/categories/', 'POST', {
+                name: name,
+                description: description,
+                is_active: isActive
+            });
+        }
+        
+        function showUpdateCategoryForm() {
+            const id = prompt('Enter category ID to update:');
+            if (!id) return;
+            
+            const formHtml = `
+                <div class="card">
+                    <div class="card-header">Update Category (ID: ${id})</div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label class="form-label">Name</label>
+                            <input type="text" class="form-control" id="category-name-update">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Description</label>
+                            <textarea class="form-control" id="category-description-update"></textarea>
+                        </div>
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" class="form-check-input" id="category-is-active-update" checked>
+                            <label class="form-check-label">Is Active</label>
+                        </div>
+                        <button class="btn btn-primary" onclick="updateCategory(${id})">Update</button>
+                    </div>
+                </div>
+            `;
+            document.getElementById('category-form-container').innerHTML = formHtml;
+            
+            // Fetch current data
+            const token = document.getElementById('auth-token').value;
+            if (token) {
+                fetch(`/api/categories/${id}/`, {
+                    headers: {
+                        'Authorization': 'Token ' + token
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('category-name-update').value = data.name || '';
+                    document.getElementById('category-description-update').value = data.description || '';
+                    document.getElementById('category-is-active-update').checked = data.is_active;
+                })
+                .catch(error => {
+                    console.error('Error fetching category:', error);
+                });
+            }
+        }
+        
+        function updateCategory(id) {
+            const name = document.getElementById('category-name-update').value;
+            const description = document.getElementById('category-description-update').value;
+            const isActive = document.getElementById('category-is-active-update').checked;
+            
+            apiCall(`/api/categories/${id}/`, 'PUT', {
+                name: name,
+                description: description,
+                is_active: isActive
+            });
+        }
+        
+        function showDeleteCategoryForm() {
+            const id = prompt('Enter category ID to delete:');
+            if (id) {
+                if (confirm(`Are you sure you want to delete category with ID ${id}?`)) {
+                    apiCall(`/api/categories/${id}/`, 'DELETE');
+                }
+            }
+        }
+        
+        // Products
+        function fetchProducts() {
+            apiCall('/api/products/', 'GET');
+        }
+        
+        function fetchProductById() {
+            const id = prompt('Enter product ID:');
+            if (id) {
+                apiCall(`/api/products/${id}/`, 'GET');
+            }
+        }
+        
+        function showCreateProductForm() {
+            const formHtml = `
+                <div class="card">
+                    <div class="card-header">Create New Product</div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label class="form-label">Name</label>
+                            <input type="text" class="form-control" id="product-name">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Description</label>
+                            <textarea class="form-control" id="product-description"></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Price</label>
+                            <input type="number" step="0.01" class="form-control" id="product-price">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Category ID</label>
+                            <input type="number" class="form-control" id="product-category">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Stock</label>
+                            <input type="number" class="form-control" id="product-stock">
+                        </div>
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" class="form-check-input" id="product-is-available" checked>
+                            <label class="form-check-label">Is Available</label>
+                        </div>
+                        <button class="btn btn-primary" onclick="createProduct()">Submit</button>
+                    </div>
+                </div>
+            `;
+            document.getElementById('product-form-container').innerHTML = formHtml;
+        }
+        
+        function createProduct() {
+            const name = document.getElementById('product-name').value;
+            const description = document.getElementById('product-description').value;
+            const price = document.getElementById('product-price').value;
+            const category = document.getElementById('product-category').value;
+            const stock = document.getElementById('product-stock').value;
+            const isAvailable = document.getElementById('product-is-available').checked;
+            
+            apiCall('/api/products/', 'POST', {
+                name: name,
+                description: description,
+                price: price,
+                category: category,
+                stock: stock,
+                is_available: isAvailable
+            });
+        }
+        
+        function showUpdateProductForm() {
+            const id = prompt('Enter product ID to update:');
+            if (!id) return;
+            
+            const formHtml = `
+                <div class="card">
+                    <div class="card-header">Update Product (ID: ${id})</div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label class="form-label">Name</label>
+                            <input type="text" class="form-control" id="product-name-update">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Description</label>
+                            <textarea class="form-control" id="product-description-update"></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Price</label>
+                            <input type="number" step="0.01" class="form-control" id="product-price-update">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Category ID</label>
+                            <input type="number" class="form-control" id="product-category-update">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Stock</label>
+                            <input type="number" class="form-control" id="product-stock-update">
+                        </div>
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" class="form-check-input" id="product-is-available-update" checked>
+                            <label class="form-check-label">Is Available</label>
+                        </div>
+                        <button class="btn btn-primary" onclick="updateProduct(${id})">Update</button>
+                    </div>
+                </div>
+            `;
+            document.getElementById('product-form-container').innerHTML = formHtml;
+            
+            // Fetch current data
+            const token = document.getElementById('auth-token').value;
+            if (token) {
+                fetch(`/api/products/${id}/`, {
+                    headers: {
+                        'Authorization': 'Token ' + token
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('product-name-update').value = data.name || '';
+                    document.getElementById('product-description-update').value = data.description || '';
+                    document.getElementById('product-price-update').value = data.price || '';
+                    document.getElementById('product-category-update').value = data.category || '';
+                    document.getElementById('product-stock-update').value = data.stock || '';
+                    document.getElementById('product-is-available-update').checked = data.is_available;
+                })
+                .catch(error => {
+                    console.error('Error fetching product:', error);
+                });
+            }
+        }
+        
+        function updateProduct(id) {
+            const name = document.getElementById('product-name-update').value;
+            const description = document.getElementById('product-description-update').value;
+            const price = document.getElementById('product-price-update').value;
+            const category = document.getElementById('product-category-update').value;
+            const stock = document.getElementById('product-stock-update').value;
+            const isAvailable = document.getElementById('product-is-available-update').checked;
+            
+            apiCall(`/api/products/${id}/`, 'PUT', {
+                name: name,
+                description: description,
+                price: price,
+                category: category,
+                stock: stock,
+                is_available: isAvailable
+            });
+        }
+        
+        function showDeleteProductForm() {
+            const id = prompt('Enter product ID to delete:');
+            if (id) {
+                if (confirm(`Are you sure you want to delete product with ID ${id}?`)) {
+                    apiCall(`/api/products/${id}/`, 'DELETE');
+                }
+            }
+        }
+        
+        // Customers
+        function fetchCustomers() {
+            apiCall('/api/customers/', 'GET');
+        }
+        
+        function fetchCustomerById() {
+            const id = prompt('Enter customer ID:');
+            if (id) {
+                apiCall(`/api/customers/${id}/`, 'GET');
+            }
+        }
+        
+        function showCreateCustomerForm() {
+            const formHtml = `
+                <div class="card">
+                    <div class="card-header">Create New Customer</div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label class="form-label">First Name</label>
+                            <input type="text" class="form-control" id="customer-first-name">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Last Name</label>
+                            <input type="text" class="form-control" id="customer-last-name">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Email</label>
+                            <input type="email" class="form-control" id="customer-email">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Phone</label>
+                            <input type="text" class="form-control" id="customer-phone">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Address</label>
+                            <textarea class="form-control" id="customer-address"></textarea>
+                        </div>
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" class="form-check-input" id="customer-is-active" checked>
+                            <label class="form-check-label">Is Active</label>
+                        </div>
+                        <button class="btn btn-primary" onclick="createCustomer()">Submit</button>
+                    </div>
+                </div>
+            `;
+            document.getElementById('customer-form-container').innerHTML = formHtml;
+        }
+        
+        function createCustomer() {
+            const firstName = document.getElementById('customer-first-name').value;
+            const lastName = document.getElementById('customer-last-name').value;
+            const email = document.getElementById('customer-email').value;
+            const phone = document.getElementById('customer-phone').value;
+            const address = document.getElementById('customer-address').value;
+            const isActive = document.getElementById('customer-is-active').checked;
+            
+            apiCall('/api/customers/', 'POST', {
+                first_name: firstName,
+                last_name: lastName,
+                email: email,
+                phone: phone,
+                address: address,
+                is_active: isActive
+            });
+        }
+        
+        function showUpdateCustomerForm() {
+            const id = prompt('Enter customer ID to update:');
+            if (!id) return;
+            
+            const formHtml = `
+                <div class="card">
+                    <div class="card-header">Update Customer (ID: ${id})</div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label class="form-label">First Name</label>
+                            <input type="text" class="form-control" id="customer-first-name-update">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Last Name</label>
+                            <input type="text" class="form-control" id="customer-last-name-update">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Email</label>
+                            <input type="email" class="form-control" id="customer-email-update">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Phone</label>
+                            <input type="text" class="form-control" id="customer-phone-update">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Address</label>
+                            <textarea class="form-control" id="customer-address-update"></textarea>
+                        </div>
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" class="form-check-input" id="customer-is-active-update" checked>
+                            <label class="form-check-label">Is Active</label>
+                        </div>
+                        <button class="btn btn-primary" onclick="updateCustomer(${id})">Update</button>
+                    </div>
+                </div>
+            `;
+            document.getElementById('customer-form-container').innerHTML = formHtml;
+            
+            // Fetch current data
+            const token = document.getElementById('auth-token').value;
+            if (token) {
+                fetch(`/api/customers/${id}/`, {
+                    headers: {
+                        'Authorization': 'Token ' + token
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('customer-first-name-update').value = data.first_name || '';
+                    document.getElementById('customer-last-name-update').value = data.last_name || '';
+                    document.getElementById('customer-email-update').value = data.email || '';
+                    document.getElementById('customer-phone-update').value = data.phone || '';
+                    document.getElementById('customer-address-update').value = data.address || '';
+                    document.getElementById('customer-is-active-update').checked = data.is_active;
+                })
+                .catch(error => {
+                    console.error('Error fetching customer:', error);
+                });
+            }
+        }
+        
+        function updateCustomer(id) {
+            const firstName = document.getElementById('customer-first-name-update').value;
+            const lastName = document.getElementById('customer-last-name-update').value;
+            const email = document.getElementById('customer-email-update').value;
+            const phone = document.getElementById('customer-phone-update').value;
+            const address = document.getElementById('customer-address-update').value;
+            const isActive = document.getElementById('customer-is-active-update').checked;
+            
+            apiCall(`/api/customers/${id}/`, 'PUT', {
+                first_name: firstName,
+                last_name: lastName,
+                email: email,
+                phone: phone,
+                address: address,
+                is_active: isActive
+            });
+        }
+        
+        function showDeleteCustomerForm() {
+            const id = prompt('Enter customer ID to delete:');
+            if (id) {
+                if (confirm(`Are you sure you want to delete customer with ID ${id}?`)) {
+                    apiCall(`/api/customers/${id}/`, 'DELETE');
+                }
+            }
+        }
+    </script>
+</body>
+</html> 
